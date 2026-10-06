@@ -1,4 +1,5 @@
 import os
+import time  #表示時間設定のためのモジュール
 import random
 import sys
 import pygame as pg
@@ -13,9 +14,27 @@ DELTA = {
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+def gameover(screen: pg.Surface) -> None:
+    black_scr = pg.Surface((WIDTH, HEIGHT))  #演習1：黒の背景を設定
+    black_scr.fill((0, 0, 0))
+    black_scr.set_alpha(200) #透明度設定
+
+    font = pg.font.Font(None, 80)  #演習1：白字でGame Over
+    text_scr = font.render("Game Over", True, (255, 255, 255))
+
+    kk_img = pg.image.load("fig/8.png")  #こうかとん画像を呼び出す
+
+
+    black_scr.blit(text_scr, [(WIDTH - text_scr.get_width()) // 2, (HEIGHT - text_scr.get_height()) // 2])  #演習1：Game OverのSurfaceを背景にblitする
+    black_scr.blit(kk_img, [WIDTH // 4 - kk_img.get_width() // 2, HEIGHT // 2 - kk_img.get_height() // 2])  #演習1：左のこうかとん表示
+    black_scr.blit(kk_img, [WIDTH * 3 // 4 - kk_img.get_width() // 2, HEIGHT // 2 - kk_img.get_height() // 2])  #演習1：右のこうかとん表示
+    screen.blit(black_scr, [0, 0])  #演習1：黒背景のSurfaceをscreen Surfaceにblitする
+    pg.display.update()
+    time.sleep(5)  #5秒間表示させる
+
 def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
     """
-    引数：こうかおんまたは爆弾のRect
+    引数：こうかとんまたは爆弾のRect
     戻り値：タプル(横方向判定結果、縦方向判定結果)
     画面内ならTrue/画面外ならFalse
     """
@@ -49,7 +68,7 @@ def main():
         screen.blit(bg_img, [0, 0]) 
 
         if kk_rct.colliderect(bb_rct):  #kkとbbのrectが重なっていたら
-            print("game over")
+            gameover(screen)
             return
 
         key_lst = pg.key.get_pressed()
@@ -63,6 +82,7 @@ def main():
         if check_bound(kk_rct) != (True, True):  #どこかしらはみでてる
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  #先ほどの動きをキャンセルする
         screen.blit(kk_img, kk_rct)
+
         bb_rct.move_ip(vx, vy)  #練習2：爆弾動く
         yoko, tate = check_bound(bb_rct)
         if not yoko:  #yoko == False
