@@ -4,14 +4,15 @@ import pygame as pg
 
 
 WIDTH, HEIGHT = 1100, 650
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 DELTA = {
     pg.K_UP: (0, -5),
     pg.K_DOWN: (0, +5),
     pg.K_LEFT: (-5, 0),
     pg.K_RIGHT: (+5, 0)
 }
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -33,8 +34,8 @@ def main():
 
         for k, tpl in DELTA.items():
             if key_lst[k]:
-                sum_mv[0] += tpl[0] #横方向移動量
-                sum_mv[1] += tpl[1] #縦方向移動量
+                sum_mv[0] += tpl[0]  #横方向移動量
+                sum_mv[1] += tpl[1]  #縦方向移動量
                 
         kk_rct.move_ip(sum_mv)
         screen.blit(kk_img, kk_rct)
