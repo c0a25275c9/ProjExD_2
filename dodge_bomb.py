@@ -6,6 +6,7 @@ import pygame as pg
 
 
 WIDTH, HEIGHT = 1100, 650
+
 DELTA = {
     pg.K_UP: (0, -5),
     pg.K_DOWN: (0, +5),
@@ -14,8 +15,10 @@ DELTA = {
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
+    引数：なし
     爆弾の大きさと速度を10段階で設定する
     戻り値：爆弾Surfaceのリスト、加速倍率のリスト
     """
@@ -31,7 +34,13 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
 
     return bb_imgs, bb_accs
 
+
 def gameover(screen: pg.Surface) -> None:  #Game Overの関数を追加
+    """
+    こうかとんと爆弾が衝突した際に、ゲームオーバー画面を5秒間表示する
+    引数：screen（ゲーム画面のSurface）
+    戻り値：なし
+    """
     black_scr = pg.Surface((WIDTH, HEIGHT))  #演習1：黒の背景を設定
     black_scr.fill((0, 0, 0))
     black_scr.set_alpha(200) #透明度設定
@@ -49,6 +58,7 @@ def gameover(screen: pg.Surface) -> None:  #Game Overの関数を追加
     pg.display.update()
     time.sleep(5)  #5秒間表示させる
 
+
 def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
     """
     引数：こうかとんまたは爆弾のRect
@@ -61,6 +71,7 @@ def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
     if rect.top < 0 or HEIGHT < rect.bottom:  #縦方向判定
         tate = False
     return yoko, tate
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
