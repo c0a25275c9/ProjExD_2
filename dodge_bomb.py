@@ -31,10 +31,10 @@ def main():
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
 
-        for key, delta in DELTA.items():
-            if key_lst[key]:
-                sum_mv[0] += delta[0]
-                sum_mv[1] += delta[1]
+        for k, tpl in DELTA.items():
+            if key_lst[k]:
+                sum_mv[0] += tpl[0] #横方向移動量
+                sum_mv[1] += tpl[1] #縦方向移動量
                 
         kk_rct.move_ip(sum_mv)
         screen.blit(kk_img, kk_rct)
