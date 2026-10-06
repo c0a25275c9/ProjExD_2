@@ -14,7 +14,24 @@ DELTA = {
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-def gameover(screen: pg.Surface) -> None:
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    爆弾の大きさと速度を10段階で設定する
+    戻り値：爆弾Surfaceのリスト、加速倍率のリスト
+    """
+    bb_imgs = []
+
+    for r in range(1, 11):  #爆弾Surfaceのリスト
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))  #黒い四隅を透明にする
+        bb_imgs.append(bb_img)
+
+    bb_accs = [a for a in range(1, 11)]  #加速度のリスト
+
+    return bb_imgs, bb_accs
+
+def gameover(screen: pg.Surface) -> None:  #Game Overの関数を追加
     black_scr = pg.Surface((WIDTH, HEIGHT))  #演習1：黒の背景を設定
     black_scr.fill((0, 0, 0))
     black_scr.set_alpha(200) #透明度設定
@@ -55,6 +72,8 @@ def main():
     bb_img = pg.Surface((20, 20))  #練習2：空のSurface
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  #練習2：赤い爆弾
     bb_img.set_colorkey((0, 0, 0))  #練習2：黒い四隅を消す
+    bb_imgs, bb_accs = init_bb_imgs()
+    bb_img = bb_imgs[0]
     bb_rct = bb_img.get_rect()
     bb_rct.centerx = random.randint(0, WIDTH)  #横座標用の乱数
     bb_rct.centery = random.randint(0, HEIGHT) #縦座標用の乱数
@@ -83,7 +102,14 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  #先ほどの動きをキャンセルする
         screen.blit(kk_img, kk_rct)
 
-        bb_rct.move_ip(vx, vy)  #練習2：爆弾動く
+        level = min(tmr // 500, 9)  #追加機能2：時間に応じて爆弾を拡大・加速させる
+        bb_img = bb_imgs[level]
+        avx = vx * bb_accs[level]  #横方向の速度
+        avy = vy * bb_accs[level]  #縦方向の速度
+        bb_rct.move_ip(avx, avy)  #爆弾を移動
+        center = bb_rct.center
+        bb_rct.size = bb_img.get_size()
+        bb_rct.center = center
         yoko, tate = check_bound(bb_rct)
         if not yoko:  #yoko == False
             vx *= -1
